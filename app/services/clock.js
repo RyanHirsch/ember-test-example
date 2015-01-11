@@ -6,7 +6,8 @@ export default Ember.Object.extend({
     minutePulse: Ember.computed.oneWay('_minutes').readOnly(),
     tick: function () {
         var clock = this;
-        Ember.run.later(function () {
+        var duration = this.get('globalSettings.timeout');
+        function _tick() {
             var seconds = clock.get('_seconds');
             var minutes = clock.get('_minutes');
             if (typeof seconds === 'number') {
@@ -15,7 +16,9 @@ export default Ember.Object.extend({
                     clock.set('_minutes', minutes + 1);
                 }
             }
-        }, this.get('globalSettings.timeout'));
+        }
+        setTimeout(Ember.run.bind(_tick), duration);
+        // Ember.run.later(_tick, duration);
     }.observes('_seconds').on('init'),
     _seconds: 0,
     _minutes: 0
